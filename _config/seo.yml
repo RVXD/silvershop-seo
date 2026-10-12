@@ -1,0 +1,32 @@
+---
+Name: silvershop-seo
+After:
+  - '#silvershop'
+  - '#googlesitemaps'
+---
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - SilverShop\Seo\Extension\SeoSiteTreeExtension
+
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - SilverShop\Seo\Extension\SeoSiteConfigExtension
+
+# The JSON-LD @graph is assembled from the providers registered here, in order. Each optional module's data is
+# read by a guarded, seo-side adapter (reviews/brands/blog/events) so no other module is edited. The order puts the
+# intrinsic nodes first (organization, product/listing) and the enrichment adapters after, so fragments merge into
+# the nodes those intrinsic providers created.
+SilverShop\Seo\StructuredData\StructuredDataRegistry:
+  providers:
+    organization: '%$SilverShop\Seo\StructuredData\Provider\OrganizationProvider'
+    product: '%$SilverShop\Seo\StructuredData\Provider\ProductProvider'
+    listing: '%$SilverShop\Seo\StructuredData\Provider\ListingProvider'
+    reviews: '%$SilverShop\Seo\StructuredData\Provider\ReviewsAdapterProvider'
+    brand: '%$SilverShop\Seo\StructuredData\Provider\BrandAdapterProvider'
+    article: '%$SilverShop\Seo\StructuredData\Provider\ArticleProvider'
+    event: '%$SilverShop\Seo\StructuredData\Provider\EventProvider'
+
+# robots.txt is served by our own controller (there is no core robots UI). googlesitemaps already serves sitemap.xml.
+SilverStripe\Control\Director:
+  rules:
+    'robots.txt': 'SilverShop\Seo\Control\RobotsController'
